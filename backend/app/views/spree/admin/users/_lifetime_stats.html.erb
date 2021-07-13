@@ -8,15 +8,15 @@
     <table class="table" id="user-lifetime-stats" data-hook>
       <tr>
         <td width="30%"><%= Spree.t(:total_sales) %>:</td>
-        <td><%= Spree::Money.new(@user.orders.complete.where(store: current_store).sum(:total), currency: current_store.default_currency).to_html %></td>
+        <td><%= @user.display_lifetime_value(current_store).to_html %></td>
       </tr>
       <tr>
         <td><%= Spree.t(:num_orders) %>:</td>
-        <td><%= @user.orders.complete.where(store_id: current_store.id).size %></td>
+        <td><%= @user.order_count(current_store) %></td>
       </tr>
       <tr>
         <td><%= Spree.t(:average_order_value) %>:</td>
-        <td><%= Spree::Money.new(@user.orders.complete.where(store_id: current_store.id).average(:total), currency: current_store.default_currency).to_html %></td>
+        <td><%= @user.display_average_order_value(current_store).to_html %></td>
       </tr>
       <tr>
         <td><%= Spree.t('admin.user.store_credits') %>:</td>
