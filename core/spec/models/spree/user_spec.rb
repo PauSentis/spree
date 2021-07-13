@@ -71,15 +71,15 @@ describe Spree.user_class, type: :model do
   context 'reporting' do
     let(:order_value) { BigDecimal('80.94') }
     let(:order_count) { 4 }
-    let(:orders) { Array.new(order_count, double(total: order_value)) }
+    let!(:orders) { create_list(:order, order_count, store: store, total: order_value, completed_at: Date.today) }
 
     before do
-      allow(orders).to receive(:sum).with(:total).and_return(orders.sum(&:total))
-      allow(orders).to receive(:count).and_return(orders.length)
+      # allow(orders).to receive(:sum).with(:total).and_return(orders.sum(&:total))
+      # allow(orders).to receive(:count).and_return(orders.length)
     end
 
     def load_orders
-      allow(subject).to receive(:orders).and_return(double(complete: orders))
+      # allow(subject).to receive(:orders).and_return(double(complete: orders))
     end
 
     describe '#lifetime_value' do
@@ -117,9 +117,10 @@ describe Spree.user_class, type: :model do
     describe '#average_order_value' do
       context 'with orders' do
         before { load_orders }
+        let(:store) { create(:store) }
 
         it 'returns the average completed order price for the user' do
-          expect(subject.average_order_value).to eq order_value
+          expect(subject.average_order_value(store)).to eq order_value
         end
       end
 
@@ -362,7 +363,7 @@ describe Spree.user_class, type: :model do
         end
 
         context 'when default ship address is associated to uncompleted order' do
-          let!(:uncompleted_order) { create(:order, user: user, ship_address: address, ship_address: address) }
+          let!(:uncompleted_order) { create(:order, user: user, ship_address: address) }
 
           it_should_behave_like 'valid'
         end
